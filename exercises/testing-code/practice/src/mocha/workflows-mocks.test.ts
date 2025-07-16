@@ -2,7 +2,8 @@ import { TestWorkflowEnvironment } from '@temporalio/testing';
 import { Worker } from '@temporalio/worker';
 import assert from 'assert';
 import { before, describe, it } from 'mocha';
-import * as activities from '../activities';
+import sinon from 'sinon';
+import { TranslationActivityInput, TranslationActivityOutput } from '../shared';
 import { sayHelloGoodbyeWorkflow } from '../workflows';
 
 describe('SayHelloGoodbye workflow', () => {
@@ -13,23 +14,40 @@ describe('SayHelloGoodbye workflow', () => {
   });
 
   after(async () => {
-    await testEnv?.teardown();
+    await sinon.restore();
   });
 
-  it('successfully completes French translation', async () => {
-
-    const { client, nativeConnection } = testEnv;
-
+  it('successfully completes French translation with a mocked call', async () => {
     const workflowInput = {
       name: "Pierre",
       languageCode: "fr",
     };
+    const helloInput: TranslationActivityInput = {
+      term: 'Hello',
+      languageCode: workflowInput.languageCode
+    };
+    const helloOutput: TranslationActivityOutput = {
+      translation: 'Bonjour'
+    };
+    const goodbyeInput: TranslationActivityInput = {
+      term: 'Goodbye',
+      languageCode: workflowInput.languageCode
+    };
+    const goodbyeOutput: TranslationActivityOutput = {
+      translation: 'Au revoir'
+    };
+
+    const { client, nativeConnection } = testEnv;
+
+    const translateTermMock = sinon.stub();
+    translateTermMock.withArgs(helloInput).resolves(helloOutput);
+    translateTermMock.withArgs(goodbyeInput).resolves(goodbyeOutput);
 
     const worker = await Worker.create({
       connection: nativeConnection,
       taskQueue: 'test',
       workflowsPath: require.resolve('../workflows'),
-      activities,
+      activities: { translateTerm: translateTermMock },
     });
 
     const result = await worker.runUntil(
@@ -40,13 +58,9 @@ describe('SayHelloGoodbye workflow', () => {
       })
     );
 
-    // TODO: Assert that the HelloMessage field in the
-    //       result is: Bonjour, Pierre
     assert.equal(result.helloMessage, 'Bonjour, Pierre');
-
-    // TODO: Assert that the GoodbyeMessage field in the
-    //       result is: Au revoir, Pierre
     assert.equal(result.goodbyeMessage, 'Au revoir, Pierre');
+
   });
 });
 
