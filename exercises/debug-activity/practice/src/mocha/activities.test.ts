@@ -1,8 +1,8 @@
 import { MockActivityEnvironment } from '@temporalio/testing';
+import assert from 'assert';
 import { describe, it } from 'mocha';
 import * as activities from '../activities';
 import { Distance, OrderConfirmation } from '../shared';
-import assert from 'assert';
 
 describe('activities', () => {
   it('successfully gets distance with two line address', async () => {
@@ -42,5 +42,18 @@ describe('activities', () => {
     const confirmation: OrderConfirmation = await env.run(activities.sendBill, input);
     assert.equal(confirmation.orderNumber, input.orderNumber);
     assert.equal(confirmation.amount, input.amount);
+  });
+
+  it('fails to send bill with negative amount', async () => {
+    const env = new MockActivityEnvironment();
+    const input = {
+      customerID: 12983,
+      orderNumber: 'PI314',
+      description: '5 large cheese pizzas',
+      amount: 6500, // amount qualifies for discount
+    };
+    const confirmation: OrderConfirmation = await env.run(activities.sendBill, input);
+    assert.equal(confirmation.orderNumber, input.orderNumber);
+    assert.equal(confirmation.amount, 6000);
   });
 });

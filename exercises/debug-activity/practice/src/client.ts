@@ -1,6 +1,6 @@
-import { Connection, Client } from '@temporalio/client';
-import { pizzaWorkflow } from './workflows';
+import { Client, Connection } from '@temporalio/client';
 import { Address, Customer, Pizza, PizzaOrder, TASK_QUEUE_NAME } from './shared';
+import { pizzaWorkflow } from './workflows';
 
 async function run() {
   const connection = await Connection.connect({ address: 'localhost:7233' });
@@ -55,10 +55,14 @@ function createPizzaOrder(): PizzaOrder {
   };
 
   // TODO: define an object representing an additional pizza
+  const p3: Pizza = {
+    description: 'Medium, with extra cheese',
+    price: 1300,
+  };
 
   // TODO: add the variable for that object to this array
 
-  const items: Pizza[] = [p1, p2];
+  const items: Pizza[] = [p1, p2, p3];
 
   const order: PizzaOrder = {
     orderNumber: 'Z1238',

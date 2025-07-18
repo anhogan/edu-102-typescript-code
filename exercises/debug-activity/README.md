@@ -43,36 +43,50 @@ what you've learned about the Event History, try to answer the
 following questions:
 
 1. Did it use sticky execution for all Workflow Tasks following the 
-   first one?
+   first one? Yes
    * Hint: It's possible to determine this without expanding any of the
      Events in the Web UI, but you may also check the `WorkflowTaskScheduled` Events for confirmation.
-2. What is the Activity Type for the first Activity executed?
-3. Which of the 2 Workers started execution of the first Activity?  
-   * Was it the one running in your first terminal or the second?
-   * Did the same Worker complete execution of this Activity?
+2. What is the Activity Type for the first Activity executed? `getDistance`
+3. Which of the 2 Workers started execution of the first Activity? `13540@Amandas-MBP-2.lan`  
+   * Was it the one running in your first terminal or the second? First terminal
+   * Did the same Worker complete execution of this Activity? Yes
 4. Following execution of the first Activity, which of the following 
    happened next?
    * A) Another Activity was executed
    * B) A Timer was started
    * C) Workflow Execution failed due to an error
-   * D) Workflow Execution completed successfully
-5. What was the duration specified for the Timer used to delay execution?
+   * D) Workflow Execution completed successfully -> This one
+5. What was the duration specified for the Timer used to delay execution? 3 seconds
    * Hint: this is shown as a timeout in the relevant Event
 6. Find the Event associated with the Worker completing execution of 
    the `getDistance` Activity
-   * What is the ID for this Event?
+   * What is the ID for this Event? 7
    * What is the ID of the Event logged when this Activity was started 
-     by the Worker?
+     by the Worker? 5
    * What is the ID of the Event logged when this Activity was scheduled 
-     by the Cluster?
+     by the Cluster? 1
 7. Can you find the input data supplied as a parameter to the
    `getDistance` Activity?
+   ```
+   {
+      "line1": "701 Mission Street",
+      "line2": "Apartment 9C",
+      "city": "San Francisco",
+      "state": "CA",
+      "postalCode": "94103"
+   }
+   ```
 8. Can you find the output data returned as output from the
    `getDistance` Activity?
+   ```
+   {
+      "kilometers": 20
+   }
+   ```
 9. What was the Maximum Interval value for the Retry Policy used to 
-   execute the `sendBill` Activity?
+   execute the `sendBill` Activity? 10s
 10. What was the Start-to-Close Timeout value used when executing
-   the `sendBill` Activity?
+   the `sendBill` Activity? 5 seconds
 
 
 Take a moment to switch to the Compact view, and if one of the rows in the 

@@ -1,5 +1,5 @@
-import { Address, Bill, Distance, OrderConfirmation } from './shared';
 import * as activity from '@temporalio/activity';
+import { Address, Bill, Distance, OrderConfirmation } from './shared';
 
 export async function getDistance(address: Address): Promise<Distance> {
   const context = activity.Context.current();
@@ -33,7 +33,7 @@ export async function sendBill(bill: Bill): Promise<OrderConfirmation> {
   if (bill.amount > 3000) {
     context.log.info('Applying discount');
 
-    chargeAmount = -500; // reduce amount charged by 500 cents
+    chargeAmount = bill.amount - 500; // reduce amount charged by 500 cents
   }
 
   // reject invalid amounts before calling the payment processor
